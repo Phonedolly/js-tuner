@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <title>js-tuner</title>
+    <meta charset="utf-8">
+</head>
+
+<body>
+    <div>
+        <h1>js-tuner</h1>
+        <p>
+            set specific frequency of sample audio and press play!
+        </p>
+        <form>
+            <input type="range" id="rangeSetFreq" min="1" max="3000" value="440" style="width: 70%;" oninput="changeFreqLabel(), setNewFreq()" onchange="" />
+            <label id="freqLabel">440 Hz</label>
+            <br/>
+            <input type="button" id="btnPlay" value="play" onclick="play()" /> </form>
+        <input type="button" id="btnStop" value="stop" onclick="stop()" /> </form>
+    </div>
+</body>
+
+</html>
+
+<script>
+    var isRunning = false;
+    // create web audio api context
+    var audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+
+    // create Oscilator node
+    var oscillrator = audioCtx.createOscillator();
+
+    oscillrator.type = 'square';
+    oscillrator.frequency.setValueAtTime(440, audioCtx.currentTime); // value in hertz
+    oscillrator.connect(audioCtx.destination);
+
+    function changeFreqLabel() {
+        let label = document.getElementById('freqLabel');
+        let currentValue = document.getElementById('rangeSetFreq').value;
+        label.innerHTML = currentValue + " Hz";
+    }
+
+    function setNewFreq() {
+        newFreq = document.getElementById('rangeSetFreq').value;
+        oscillrator.frequency.setValueAtTime(newFreq, audioCtx.currentTime); // value in hertz
+    }
+
+    function play() {
+        if (!isRunning) {
+            oscillrator.start();
+            isRunning = true;
+        }
+    }
+
+    function stop() {
+        if (isRunning) {
+            oscillrator.stop();
+            isRunning = false;
+        }
+    }
+</script>
